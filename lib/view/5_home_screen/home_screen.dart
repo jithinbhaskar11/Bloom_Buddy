@@ -6,6 +6,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+import 'package:intl/intl.dart';
+
 class Home_Screen extends StatefulWidget {
   const Home_Screen({Key? key}) : super(key: key);
 
@@ -19,10 +21,17 @@ class _Home_ScreenState extends State<Home_Screen> {
 
   final nameController = TextEditingController();
   final locationController = TextEditingController();
+  final wateringDateController=TextEditingController();
+  final fertilizingDateController=TextEditingController();
 
   File? image;
 
+  String waterHintText='Select a date to water your plant';
+  String fertHintText='Select a date to fertilize your plant';
+
   var box = Hive.box('plantBox');
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -513,6 +522,7 @@ class _Home_ScreenState extends State<Home_Screen> {
 
                     ///water date
                     TextField(
+                      controller: wateringDateController,
                       readOnly: true,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
@@ -524,11 +534,20 @@ class _Home_ScreenState extends State<Home_Screen> {
                         enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.black),
                             borderRadius: BorderRadius.circular(30)),
-                        hintText: 'Select next date to water your palnt',
+                        hintText: waterHintText,
                         suffixIcon: GestureDetector(
-                            onTap: () {
-                              ///calender date picker
+                            onTap: () async{
+                              DateTime ? wateringDate= await showDatePicker(context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime.now(),
+                                  lastDate: DateTime(2030));
+                              final dateFormat=DateFormat('dd-MM-yyyy').format(wateringDate!);
+                              setState(() {
+                                wateringDateController.text=dateFormat.toString();
+                                waterHintText=dateFormat.toString();
+                              });
                             },
+
                             child: Icon(
                               Icons.calendar_month,
                               color: Colors.green,
@@ -541,6 +560,7 @@ class _Home_ScreenState extends State<Home_Screen> {
 
                     ///fertilizing date
                     TextField(
+                      controller: fertilizingDateController,
                       readOnly: true,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
@@ -552,10 +572,21 @@ class _Home_ScreenState extends State<Home_Screen> {
                         enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.black),
                             borderRadius: BorderRadius.circular(30)),
-                        hintText: 'Select next date to Fertilize your palnt',
+                       // hintText: fertilizingDateController.text,
+                       // hintText: 'Select a date to fertilize your plant',
+                        hintText: fertHintText,
                         suffixIcon: GestureDetector(
-                            onTap: () {
-                              ///calender date picker
+                            onTap: () async{
+                         DateTime ? fertilizingDate= await showDatePicker(context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime.now(),
+                                  lastDate: DateTime(2030));
+                         final dateFormat=DateFormat('dd-MM-yyyy').format(fertilizingDate!);
+
+                         setState(() {
+                           fertilizingDateController.text=dateFormat.toString();
+                           fertHintText=dateFormat.toString();
+                         });
                             },
                             child: Icon(
                               Icons.calendar_month,
@@ -622,19 +653,13 @@ class _Home_ScreenState extends State<Home_Screen> {
                                         Text('Gallery')
                                       ],
                                     ),
-                                    Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        IconButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            icon: Icon(Icons.cancel)),
-                                        Text('Cancel')
-                                      ],
-                                    ),
                                   ],
                                 ),
+                                actions: [
+                                  TextButton(onPressed: (){
+                                    Navigator.pop(context);
+                                  }, child: Text('Cancel'))
+                                ],
                               ),
                             );
                           },

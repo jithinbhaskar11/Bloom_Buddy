@@ -22,7 +22,7 @@ class _PlantCare_ScreenState extends State<PlantCare_Screen> {
             fontSize: 20),),
       ),
       body: ListView.builder(
-          itemCount: 10,
+          itemCount: dummyPlantData.length,
           itemBuilder: (ctx,index){
         return Padding(
           padding: const EdgeInsets.all(8.0),
