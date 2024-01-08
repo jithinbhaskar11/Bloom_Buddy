@@ -19,16 +19,15 @@ class PlantModelAdapter extends TypeAdapter<PlantModel> {
     return PlantModel(
       PlantName: fields[0] as String,
       PlantLocation: fields[1] as String,
-      WateringDate: fields[2] as DateTime,
-      FertilizingDate: fields[3] as DateTime,
-      imagePath: fields[4] as String,
+      WateringDate: fields[2] as String,
+      FertilizingDate: fields[3] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, PlantModel obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.PlantName)
       ..writeByte(1)
@@ -36,9 +35,7 @@ class PlantModelAdapter extends TypeAdapter<PlantModel> {
       ..writeByte(2)
       ..write(obj.WateringDate)
       ..writeByte(3)
-      ..write(obj.FertilizingDate)
-      ..writeByte(4)
-      ..write(obj.imagePath);
+      ..write(obj.FertilizingDate);
   }
 
   @override

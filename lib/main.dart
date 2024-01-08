@@ -9,9 +9,7 @@ Future <void> main()async{
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter(PlantModelAdapter());
-  var box = await Hive.openBox('plantBox');
-
-
+  var box = await Hive.openBox<PlantModel>('plantBox');
 
 
   runApp(BloomBuddy());

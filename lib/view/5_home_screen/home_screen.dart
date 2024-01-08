@@ -1,11 +1,9 @@
 import 'package:anim_search_bar/anim_search_bar.dart';
+import 'package:bloom_buddy/model/plantmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
-
 import 'package:intl/intl.dart';
 
 class Home_Screen extends StatefulWidget {
@@ -16,6 +14,8 @@ class Home_Screen extends StatefulWidget {
 }
 
 class _Home_ScreenState extends State<Home_Screen> {
+
+
   final searchController = TextEditingController();
   var currentIndex = 0;
 
@@ -24,12 +24,17 @@ class _Home_ScreenState extends State<Home_Screen> {
   final wateringDateController=TextEditingController();
   final fertilizingDateController=TextEditingController();
 
-  File? image;
 
-  String waterHintText='Select a date to water your plant';
-  String fertHintText='Select a date to fertilize your plant';
 
-  var box = Hive.box('plantBox');
+
+  var box = Hive.box<PlantModel>('plantBox');
+  var myKeysList=[];
+
+  @override
+  void initState() {
+    myKeysList=box.keys.toList();
+    super.initState();
+  }
 
 
 
@@ -83,7 +88,6 @@ class _Home_ScreenState extends State<Home_Screen> {
                           child: Container(
                             height: 170,
                             decoration: BoxDecoration(
-                                // border: Border.all(color: Colors.black),
                                 borderRadius: BorderRadius.circular(30),
                                 color: Colors.lime[50],
                                 boxShadow: [
@@ -93,17 +97,19 @@ class _Home_ScreenState extends State<Home_Screen> {
                                       blurRadius: 5)
                                 ]),
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
+                                        MainAxisAlignment.center,
                                     children: [
                                       Text(
                                         'name',
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold),
+                                            fontWeight: FontWeight.bold,fontSize: 20),
                                       ),
                                       SizedBox(
                                         height: 10,
@@ -130,18 +136,20 @@ class _Home_ScreenState extends State<Home_Screen> {
                                                   color: Colors.blue,
                                                 ),
                                                 Text(
-                                                  'in 3 days',
+                                                 // box.get(myKeysList)?.WateringDate ?? '',
+                                                 'in 3 days',
                                                   style: TextStyle(
                                                       color: Colors.black,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       fontSize: 10),
+
                                                 )
                                               ],
                                             ),
                                           ),
                                           SizedBox(
-                                            width: 10,
+                                            width: 30,
                                           ),
                                           Container(
                                             padding: EdgeInsets.symmetric(
@@ -374,39 +382,7 @@ class _Home_ScreenState extends State<Home_Screen> {
                                                                   Colors.blue,
                                                             ),
                                                             SizedBox(
-                                                              width: 10,
-                                                            ),
-                                                            Container(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                      horizontal:
-                                                                          50,
-                                                                      vertical:
-                                                                          10),
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                border: Border.all(
-                                                                    color: Colors
-                                                                        .blue),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            30),
-                                                                color: Colors
-                                                                    .green,
-                                                              ),
-                                                              child: Icon(
-                                                                Icons
-                                                                    .camera_alt,
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              width: 10,
-                                                            ),
-                                                            SizedBox(
-                                                              width: 10,
+                                                              width: 30,
                                                             ),
                                                             MaterialButton(
                                                               onPressed: () {},
@@ -440,26 +416,6 @@ class _Home_ScreenState extends State<Home_Screen> {
                                     ],
                                   ),
                                 ),
-                                // SizedBox(
-                                //   width: ,
-                                // ),
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 55, vertical: 10),
-                                  decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                          image: AssetImage(
-                                              'assets/images/plant.jpeg'),
-                                          fit: BoxFit.cover),
-                                      borderRadius: BorderRadius.circular(30),
-                                      boxShadow: [
-                                        BoxShadow(
-                                            color:
-                                                Colors.black.withOpacity(0.3),
-                                            offset: Offset(2, 2),
-                                            blurRadius: 2)
-                                      ]),
-                                )
                               ],
                             ),
                           ),
@@ -534,7 +490,7 @@ class _Home_ScreenState extends State<Home_Screen> {
                         enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.black),
                             borderRadius: BorderRadius.circular(30)),
-                        hintText: waterHintText,
+                        hintText: 'Select a date to water your plant',
                         suffixIcon: GestureDetector(
                             onTap: () async{
                               DateTime ? wateringDate= await showDatePicker(context: context,
@@ -544,7 +500,6 @@ class _Home_ScreenState extends State<Home_Screen> {
                               final dateFormat=DateFormat('dd-MM-yyyy').format(wateringDate!);
                               setState(() {
                                 wateringDateController.text=dateFormat.toString();
-                                waterHintText=dateFormat.toString();
                               });
                             },
 
@@ -572,9 +527,8 @@ class _Home_ScreenState extends State<Home_Screen> {
                         enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.black),
                             borderRadius: BorderRadius.circular(30)),
-                       // hintText: fertilizingDateController.text,
-                       // hintText: 'Select a date to fertilize your plant',
-                        hintText: fertHintText,
+
+                        hintText: 'Select a date to fertilize your plant',
                         suffixIcon: GestureDetector(
                             onTap: () async{
                          DateTime ? fertilizingDate= await showDatePicker(context: context,
@@ -585,7 +539,6 @@ class _Home_ScreenState extends State<Home_Screen> {
 
                          setState(() {
                            fertilizingDateController.text=dateFormat.toString();
-                           fertHintText=dateFormat.toString();
                          });
                             },
                             child: Icon(
@@ -619,71 +572,19 @@ class _Home_ScreenState extends State<Home_Screen> {
                           width: 10,
                         ),
 
-                        ///camera
-                        GestureDetector(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: Text('Plant photo'),
-                                content: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        IconButton(
-                                            onPressed: () {
-                                              pickImageFromCamera();
-                                            },
-                                            icon:
-                                                Icon(Icons.camera_alt_rounded)),
-                                        Text('Camera')
-                                      ],
-                                    ),
-                                    Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        IconButton(
-                                            onPressed: () {
-                                              pickImageFromGallery();
-                                            },
-                                            icon: Icon(Icons.image)),
-                                        Text('Gallery')
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                actions: [
-                                  TextButton(onPressed: (){
-                                    Navigator.pop(context);
-                                  }, child: Text('Cancel'))
-                                ],
-                              ),
-                            );
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 10),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.blue),
-                              borderRadius: BorderRadius.circular(30),
-                              color: Colors.green,
-                            ),
-                            child: Icon(
-                              Icons.camera_alt,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
+
                         SizedBox(
                           width: 10,
                         ),
 
                         ///save
                         MaterialButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            box.add(PlantModel(PlantName: nameController.text, PlantLocation: locationController.text, WateringDate: wateringDateController.text, FertilizingDate: fertilizingDateController.text));
+                            // myKeysList=box.keys.toList();
+                            // setState(() {});
+                            Navigator.pop(context);
+                          },
                           child: Text(
                             'Save',
                             style: TextStyle(color: Colors.white),
@@ -703,19 +604,5 @@ class _Home_ScreenState extends State<Home_Screen> {
         ),
       ),
     );
-  }
-
-  Future pickImageFromCamera() async {
-    final image = await ImagePicker().pickImage(source: ImageSource.camera);
-    if (image == null) return;
-    final imageTemp = File(image.path);
-    setState(() => this.image = imageTemp);
-  }
-
-  Future pickImageFromGallery() async {
-    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (image == null) return;
-    final imageTemp = File(image.path);
-    setState(() => this.image = imageTemp);
   }
 }

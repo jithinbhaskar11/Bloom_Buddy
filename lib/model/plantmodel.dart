@@ -10,16 +10,13 @@ class PlantModel {
   @HiveField(1)
   String PlantLocation;
   @HiveField(2)
-  DateTime WateringDate;
+  String WateringDate;
   @HiveField(3)
-  DateTime FertilizingDate;
-  @HiveField(4)
-  String imagePath;
+  String FertilizingDate;
 
   PlantModel(
       {required this.PlantName,
       required this.PlantLocation,
       required this.WateringDate,
-      required this.FertilizingDate,
-      required this.imagePath});
+      required this.FertilizingDate});
 }
