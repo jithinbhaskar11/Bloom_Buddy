@@ -20,6 +20,22 @@ class _PlantCare_ScreenState extends State<PlantCare_Screen> {
             fontWeight: FontWeight.bold,
             color: Colors.white,
             fontSize: 20),),
+
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () async {
+              final selectedPlant = await showSearch(
+                context: context,
+                delegate: PlantSearchDelegate(dummyPlantData),
+              );
+
+              if (selectedPlant != null) {
+                Navigator.of(context).pushNamed('details', arguments: selectedPlant['id']);
+              }
+            },
+          ),
+        ],
       ),
       body: ListView.builder(
           itemCount: dummyPlantData.length,
@@ -34,7 +50,7 @@ class _PlantCare_ScreenState extends State<PlantCare_Screen> {
               height: 120,
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(30)
+                borderRadius: BorderRadius.circular(30),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -65,3 +81,69 @@ class _PlantCare_ScreenState extends State<PlantCare_Screen> {
     );
   }
 }
+
+class PlantSearchDelegate extends SearchDelegate {
+  final List<Map<String, dynamic>> plantData;
+
+  PlantSearchDelegate(this.plantData);
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          if (query.isEmpty) {
+            // If the search bar is empty, close the search bar
+            close(context, null);
+          } else {
+            // If there is text in the search bar, clear the text
+            query = '';
+          }
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    // to implement  search results page here
+    return Container();
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final suggestionList = query.isEmpty
+        ? plantData
+        : plantData.where((plant) => plant['name'].toLowerCase().contains(query.toLowerCase())).toList();
+
+    final limitedSuggestions = suggestionList.take(6).toList();
+
+    return limitedSuggestions.isEmpty
+        ? Center(
+      child: Text('No plant found'),
+    )
+        : ListView.builder(
+      itemCount: limitedSuggestions.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(limitedSuggestions[index]['name']),
+          onTap: () {
+            close(context, limitedSuggestions[index]);
+          },
+        );
+      },
+    );
+  }
+}
+

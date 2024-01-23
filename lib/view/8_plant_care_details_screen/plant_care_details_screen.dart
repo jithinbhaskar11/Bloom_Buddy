@@ -36,10 +36,14 @@ class _PlantCare_DetailsState extends State<PlantCare_Details> {
           SizedBox(
             height: 20,
           ),
-          Text(
-            plantData['name'],
-            style:
-                GoogleFonts.nunito(fontWeight: FontWeight.bold, fontSize: 30),
+          Column(
+            children: [
+              Text(
+                plantData['name'],
+                style:
+                    GoogleFonts.nunito(fontWeight: FontWeight.bold, fontSize: 30),
+              ),
+            ],
           ),
           Text(plantData['type'], style: GoogleFonts.nunito(fontSize: 20)),
           SizedBox(
